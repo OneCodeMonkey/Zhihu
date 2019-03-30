@@ -1,0 +1,76 @@
+<?php if ($this->column_info) { ?>
+  <?php foreach ($this->column_info as $column) { ?>
+        <dl>
+            <dt>
+                <img class="N-zimg" onclick="window.location = G_BASE_URL + '/column/details/<?php echo $column['column_id']; ?>'" src="<?php echo $column['column_pic']; ?>">
+                <?php if($column['uid'] != $this->user_id && $this->user_id){ ?>
+                <a onclick="focus_column($(this), <?php echo $column['column_id']; ?>);">
+                    <?php if($column['has_focus_column']){ ?>
+                         <img  alt="取消关注" src="<?php echo G_STATIC_URL ?>/css/default/img/nadn.png">
+                    <?php }else{ ?>
+                         <img  alt="关注" src="<?php echo G_STATIC_URL ?>/css/default/img/nadd.png">
+                    <?php } ?>   
+                </a>
+                <?php } ?>
+            </dt>
+            <dd>
+                <h2><a href="column/details/<?php echo $column['column_id'];?>"><?php echo cjk_substr($column['column_name'], 0, 10 , 'UTF-8', '...') ?></a></h2>
+                <p><?php echo cjk_substr($column['column_description'], 0, 20 , 'UTF-8', '...') ?></p>
+                <span>
+                    <em><i><img src="<?php echo G_STATIC_URL ?>/css/default/img/nz.png"></i> <?php echo num2tring($column['votes_count']) ?></em>
+                    <em><i><img src="<?php echo G_STATIC_URL ?>/css/default/img/nsee.png"></i> <?php echo num2tring($column['views_count']) ?></em>
+                </span>
+                <span>
+                    <em><?php _e('浏览量'); ?>:<?php echo num2tring($column['views_count']) ?></em>
+                    <em><?php _e('文章数'); ?>:<?php echo num2tring($column['article_count']) ?></em>
+                </span>
+            </dd>
+        </dl>
+  <?php } ?>
+<?php } ?>
+
+<script type="text/javascript">
+
+    $(".N-myzilistbox dl:odd").css('float','right');
+    
+    
+    function focus_column(selector,data_id)
+    {    
+         var url = '/column/ajax/focus_column/';
+
+         var data = {'column_id': data_id};
+
+         $.post(G_BASE_URL + url, data, function (result)
+         {
+            if (result.errno == 1)
+            {
+                if (result.rsm.type == 'add')
+                {
+                    AWS.alert("关注成功！");
+                    selector.html('<img  src="<?php echo G_STATIC_URL ?>/css/default/img/nadn.png">');
+                    
+                }
+                else
+                {   
+                    AWS.alert("取消关注！");
+                    selector.html('<img  src="<?php echo G_STATIC_URL ?>/css/default/img/nadd.png">');
+                    
+                }
+            }
+            else
+            {
+                if (result.err)
+                {   
+                    AWS.alert(result.err);
+                }
+
+                if (result.rsm.url)
+                {
+                    window.location = decodeURIComponent(result.rsm.url);
+                }
+            }
+
+        }, 'json');
+
+    }
+</script>

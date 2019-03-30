@@ -1,0 +1,117 @@
+<?php TPL::output('admin/global/header.tpl.htm'); ?>
+<?php TPL::output('admin/global/nav_menu.tpl.htm'); ?>
+
+    <div class="aw-content-wrap">
+        <div class="mod">
+            <div class="mod-head">
+                <h3>
+                    <ul class="nav nav-tabs">
+                        <li class="<?php if ($_GET['act'] == 'list') { ?> active<?php } ?>"><a
+                                    href="admin/column/list/"><?php _e('专栏列表'); ?></a></li>
+                        <li class="<?php if ($_GET['act'] == 'check') { ?> active<?php } ?>"><a
+                                    href="admin/column/check/"><?php _e('专栏审核'); ?></a></li>
+                    </ul>
+                </h3>
+            </div>
+
+            <div class="mod-body tab-content">
+                <div class="alert alert-success hide error_message"></div>
+
+                <form action="admin/column_ajax/save_column_status/" method="post" id="column_list_form">
+                    <input name="action_type" id="action_type" type="hidden" value=""/>
+                    <div class="table-responsive">
+                        <?php if ($this->column_list) { ?>
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th><input type="checkbox" class="check-all"></th>
+                                    <th><?php _e('会员'); ?></th>
+                                    <th><?php _e('创建日期'); ?></th>
+                                    <th><?php _e('标题'); ?></th>
+                                    
+                                    <!--<th><?php _e('描述'); ?></th>-->
+                                    <th><?php _e('专栏描述'); ?></th>
+                                    <th><?php _e('拒绝原因'); ?></th>
+                                    <th><?php _e('操作'); ?></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php foreach ($this->column_list AS $key => $val) { ?>
+                                    <tr>
+                                        <td class="oncheck">
+                                            <input class="input_ch" data-title="<?php echo $val['column_name'];?>" name="column_ids[]"
+                                                   value="<?php echo $val['column_id']; ?>"
+                                                   type="checkbox" <?php if ($val['enabled'] == 1) { ?> checked="checked"  <?php } ?>/>
+                                        </td>
+                                       
+                                        <td><?php echo $val['user_info']['user_name']; ?></td>
+                                        <td><?php echo date('Y-m-d', $val['add_time']); ?></td>
+                                        <td><?php echo $val['column_name']; ?></td>
+                                        <!--<td width="50%"><?php echo $val['memo']; ?></td>-->
+                                        <td width="20%"><?php echo $val['column_description']; ?></td>
+                                        <td>
+                                            <input type="text" class="form-control" name="reson[]"
+                                                   id="reson_<?php echo $val['column_id']; ?>"
+                                                   value="<?php echo($val['reason']); ?>"/></td>
+                                        <td>
+                                            <!-- <a target="_blank" href="column/edit_apply/<?php echo $val['column_id']; ?>"
+                                               class="icon icon-edit md-tip" title="<?php _e('编辑'); ?>"></a> -->
+                                            <a onclick="deleteColumn(<?php echo $val['column_id'] ?>,'<?php echo $this->post_hash; ?>')"
+                                               title="<?php _e('删除'); ?>" data-toggle="tooltip"
+                                               class="icon icon-trash md-tip"></a>
+                                            <a onclick="reson(<?php echo $val['column_id']; ?>);" title="<?php _e('拒绝'); ?>"
+                                               data-toggle="tooltip" class="icon icon-forbid md-tip"></a>
+                                        </td>
+                                    </tr>
+                                <?php } ?>
+                                </tbody>
+                            </table>
+                        <?php } ?>
+                    </div>
+                </form>
+                <div class="mod-table-foot">
+                    <?php echo $this->pagination; ?>
+
+                    <a onclick="check(1);"
+                       class="btn-primary btn"><?php _e('通过'); ?></a>
+                    <a onclick="check(-1);"
+                       class="btn btn-danger btn"><?php _e('拒绝'); ?></a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+<script type="text/javascript">
+        function reson(id) {
+            var reson = $('#reson_' + id).val();
+            AWS.ajax_request(G_BASE_URL + '/admin/column_ajax/reject_column/?id=' + id + '&reson=' + encodeURIComponent(reson));
+        }
+
+        function check(verify){
+            var arr = [];
+
+            $.each($('input:checkbox'),function(){
+                if(this.checked && $(this).attr('data-title')){
+                    arr.push($(this).attr('data-title'));
+                }
+            });
+
+            if(arr.length == 0){
+                AWS.alert('请选择要操作的数据');
+                return;
+            }
+
+            $("#action_type").val(verify);
+            
+            AWS.ajax_post($('#column_list_form'),  AWS.ajax_processer, 'error_message');
+        }
+
+        function deleteColumn(id, post_hash) {
+            AWS.dialog('confirm', {'message': '确定要删除专栏吗？删除专栏后，专栏中的所有文章也会被删除'}, function () {
+                AWS.ajax_request(G_BASE_URL + '/admin/column_ajax/remove_column/', 'column_id=' + id + '&post_hash=' + post_hash)
+            })
+        }
+
+</script>
+
+<?php TPL::output('admin/global/footer.tpl.htm'); ?>

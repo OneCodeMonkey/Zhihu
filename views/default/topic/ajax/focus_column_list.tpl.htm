@@ -1,0 +1,19 @@
+<?php if ($this->column_list) { ?>
+    <?php foreach ($this->column_list AS $key => $val) { ?>
+        <div class="aw-item">
+            <a class="img aw-border-radius-5" href="column/details/<?php echo $val['column_id']; ?>"
+               data-id="<?php echo $val['column_id']; ?>">
+                <img style="width: 50px;height: 50px;" src="<?php echo $val['column_pic']; ?>" alt=""/>
+            </a>
+            <p class="clearfix">
+                <span class="topic-tag">
+                    <a class="text" href="column/details/<?php echo $val['column_id']; ?>"
+                       data-id="<?php echo $val['column_id']; ?>"><?php echo $val['column_name']; ?></a>
+                 </span>
+            </p>
+            <p class="text-color-999">
+                <?php echo $val['column_description']?>
+            </p>
+        </div>
+    <?php } ?>
+<?php } ?>

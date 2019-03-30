@@ -1,0 +1,20 @@
+<?php if ($this->article_list) { ?>
+  <?php foreach ($this->article_list as $article) { ?>
+        <dl>
+            <dt><a href="article/<?php echo $article['id']; ?>"><img style="height:100px;" src="<?php echo $article['article_img']; ?>"></a></dt>
+            <dd>
+                <h2><a href="article/<?php echo $article['id']; ?>"><?php echo $article['title'] ?></a></h2>
+                <b><?php echo $article['user']['user_name'] ?></b>
+                <span>
+                    <em><i><img src="<?php echo G_STATIC_URL ?>/css/default/img/nz.png"></i> <?php echo num2tring($article['votes']) ?></em>
+                    <em><i><img src="<?php echo G_STATIC_URL ?>/css/default/img/nsee.png"></i> <?php echo num2tring($article['views']) ?></em>
+                    <em class="ntime"><?php echo date_friendly($article['add_time']);?></em>
+                </span>
+            </dd>
+        </dl>
+        <?php } ?>
+<?php } ?>
+<script type="text/javascript">
+    $(".nzllist dl:nth-child(3n)").css('float','right');
+    $(".nzllist dl:nth-child(3n+2)").css('position','relative').css('left','17px');
+</script>

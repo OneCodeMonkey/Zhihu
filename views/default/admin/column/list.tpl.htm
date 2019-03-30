@@ -1,0 +1,93 @@
+<?php TPL::output('admin/global/header.tpl.htm'); ?>
+<?php TPL::output('admin/global/nav_menu.tpl.htm'); ?>
+
+    <div class="aw-content-wrap">
+        <div class="mod">
+            <div class="mod-head">
+                <h3>
+                    <ul class="nav nav-tabs">
+                        <li class="<?php if ($_GET['act'] == 'list') { ?> active<?php } ?>"><a
+                                    href="admin/column/list/"><?php _e('专栏列表'); ?></a></li>
+                        <li class="<?php if ($_GET['act'] == 'check') { ?> active<?php } ?>"><a
+                                    href="admin/column/check/"><?php _e('专栏审核'); ?></a></li>
+                    </ul>
+                </h3>
+            </div>
+
+            <div class="mod-body tab-content">
+                <div class="alert alert-success hide error_message"></div>
+
+                <form action="admin/column_ajax/save_column_status/" method="post" id="column_list_form">
+                    <input name="action_type" id="action_type" type="hidden" value=""/>
+                    <div class="table-responsive">
+                        <?php if ($this->column_list) { ?>
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th><input type="checkbox" class="check-all"></th>
+                                    <th style="width: 10%"><?php _e('排序(递增)'); ?></th>
+                                    <th><?php _e('会员'); ?></th>
+                                    <th><?php _e('创建日期'); ?></th>
+                                    <th width="15%"><?php _e('标题'); ?></th>
+                                    <th><?php _e('浏览数'); ?></th>
+                                    <th><?php _e('关注数'); ?></th>
+                                    <!--<th><?php _e('描述'); ?></th>-->
+                                    <th width="15%"><?php _e('专栏描述'); ?></th>
+                                    <th><?php _e('专栏图片'); ?></th>
+                                    <th><?php _e('操作'); ?></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php foreach ($this->column_list AS $key => $val) { ?>
+                                    <tr>
+                                        <td class="oncheck">
+                                            <input class="input_ch" name="column_ids[]"
+                                                   value="<?php echo $val['column_id']; ?>"
+                                                   type="checkbox" <?php if ($val['enabled'] == 1) { ?> checked="checked"  <?php } ?>/>
+                                        </td>
+                                        <td><input type="text" onBlur="changeSort(<?php echo $val['column_id']; ?>);" class="form-control" style="width:80px;display: inline;" id="sort_<?php echo $val['column_id']; ?>"
+                                                   value="<?php echo($val['sort']); ?>"/>
+                                                 
+                                        </td>
+                                        <td><?php echo $val['user_info']['user_name']; ?></td>
+                                        <td><?php echo date('Y-m-d', $val['add_time']); ?></td>
+                                        <td width="15%"><?php echo $val['column_name']; ?></td>
+                                        <td><?php echo $val['llcs']? :0; ?></td>
+                                        <td><?php echo $val['focus_count']; ?></td>
+                                        <td width="15%"><?php echo $val['column_description']; ?></td>
+                                        <td><image style="width:100px;height:80px;" src="<?php echo $val['column_pic']; ?>" ></td>
+                                        
+                                        <td>
+                                            <a target="_blank" href="column/edit_apply/<?php echo $val['column_id']; ?>"
+                                               class="icon icon-edit md-tip" title="<?php _e('编辑'); ?>"></a>
+                                            <a onclick="deleteColumn(<?php echo $val['column_id'] ?>,'<?php echo $this->post_hash; ?>')"
+                                               title="<?php _e('删除'); ?>" data-toggle="tooltip"
+                                               class="icon icon-trash md-tip"></a>
+                                        </td>
+                                    </tr>
+                                <?php } ?>
+                                </tbody>
+                            </table>
+                        <?php } ?>
+                    </div>
+                </form>
+                <div class="mod-table-foot">
+                    <?php echo $this->pagination; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+<script type="text/javascript">
+        function changeSort(id) {
+            var sort = $('#sort_' + id).val();
+            AWS.ajax_request(G_BASE_URL + '/admin/column_ajax/sort_column/?id='+id+"&sort="+sort);
+        }
+
+        function deleteColumn(id, post_hash) {
+            AWS.dialog('confirm', {'message': '确定要删除专栏吗？删除专栏后，专栏中的所有文章也会被删除'}, function () {
+                AWS.ajax_request(G_BASE_URL + '/admin/column_ajax/remove_column/', 'column_id=' + id + '&post_hash=' + post_hash)
+            })
+        }
+</script>
+
+<?php TPL::output('admin/global/footer.tpl.htm'); ?>

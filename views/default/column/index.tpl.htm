@@ -1,0 +1,180 @@
+<?php TPL::output('global/header.tpl.htm'); ?>
+
+<div class="aw-container-wrap">
+        <div class="container">
+            <div class="row">
+                <div class="aw-content-wrap clearfix simpobox">
+                
+                    <div class="N-left clearfix">
+                        <div class="N-mytitle">
+                            <h2><img src="<?php echo G_STATIC_URL ?>/css/default/img/np.png"><?php _e('专栏'); ?></h2>
+                            <ul>
+                                <li class="<?php if ($_GET['sort']=='sum') { ?> cur <?php } ?> clearfix">
+                                    <a href="column/ajax/list/#column" onclick="return false;" data-sort="sum"><?php _e('默认'); ?></a>
+                                </li>
+                                <li class="<?php if ($_GET['sort']=='new') { ?> cur <?php } ?> clearfix">
+                                    <a href="column/ajax/list/sort-new#column" onclick="return false;" data-sort="new"><?php _e('最新'); ?></a>
+                                </li>
+                                <li class="<?php if ($_GET['sort']=='hot') { ?> cur <?php } ?> clearfix">
+                                    <a href="column/ajax/list/sort-hot#column" onclick="return false;" data-sort="hot"><?php _e('热门'); ?></a>
+                                </li>
+                                <li class="clearfix">
+                                    <a href="javascript:void(0);" onclick="window.location.href='column/my/'" data-sort="hot"><?php _e('我的专栏'); ?></a>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="N-zllist clearfix">
+                        
+                            <div class="N-myzilistbox clearfix" id="column">
+                                <?php echo $this->column_list_bit; ?>
+                            </div>
+
+                            <h6 class="nhref" id="bp_all_more" data-page="1"><i><img src="<?php echo G_STATIC_URL ?>/css/default/img/href.png"></i><?php _e('换一换'); ?></h6>
+
+                            
+                            <div class="N-mytitles">
+                                <h2><img src="<?php echo G_STATIC_URL ?>/css/default/img/np.png"><?php _e('文章'); ?></h2>
+                                <a href="article/" class="nckmore"><?php _e('更多'); ?>&gt;&gt;</a>
+                            </div>
+                            
+                            <div class="nzllist clearfix">
+                                 <?php foreach ($this->article_list as $article) { ?>
+                                <dl>
+                                    <dt><a href="article/<?php echo $article['id']; ?>"><img src="<?php echo $article['article_img']; ?>"></a></dt>
+                                    <dd>
+                                        <h2><a href="article/<?php echo $article['id']; ?>"><?php echo $article['title'] ?></a></h2>
+                                        <b><?php echo $article['user']['user_name'] ?></b>
+                                        <span>
+                                            <em><i><img src="<?php echo G_STATIC_URL ?>/css/default/img/nz.png"></i> <?php echo num2tring($article['votes']) ?></em>
+                                            <em><i><img src="<?php echo G_STATIC_URL ?>/css/default/img/nsee.png"></i> <?php echo num2tring($article['views']) ?></em>
+                                            <em class="ntime"><?php echo date_friendly($article['add_time']);?></em>
+                                        </span>
+                                    </dd>
+                                </dl>
+                                <?php } ?>
+                            </div>
+                            
+                            <h6 class="nhref" id="article_all_more" data-page="1"><i><img src="<?php echo G_STATIC_URL ?>/css/default/img/href.png"></i><?php _e('换一换'); ?></h6>
+                             
+                            
+                        </div>
+                        
+                        
+                    </div>
+                    <div class="N-right clearfix">
+                       
+                            <div class="N-tjpop">
+                                <h2><img src="<?php echo G_STATIC_URL ?>/css/default/img/tjpop.png"><?php _e('推荐专栏'); ?></h2>
+                            </div>
+                            
+                            <?php foreach ($this->recommend_info as $k => $recommend) { ?>
+                            <div class="N-poplist <?php echo $k!=0?($k==1?'two':'three'):'one';?>">
+                                <div class="N-popbox">
+                                    <em><?php echo $k+1;?></em>
+                                    <dl>
+                                        <dt><img onclick="window.location = G_BASE_URL + '/column/details/<?php echo $recommend['column_id']; ?>'" src="<?php echo $recommend['column_pic']; ?>"><a href="column/details/<?php echo $recommend['column_id'];?>"><?php echo $recommend['column_name'] ?></a></dt>
+                                        <dd><?php echo cjk_substr($recommend['column_description'], 0, 10 , 'UTF-8', '...') ?></dd>
+                                    </dl>
+                                    <ul>
+                                        <li><img src="<?php echo G_STATIC_URL ?>/css/default/img/nsee.png"><?php _e('文章总浏览量'); ?>:<i><?php echo num2tring($recommend['views_count']) ?></i></li>
+                                        <li><img src="<?php echo G_STATIC_URL ?>/css/default/img/nnum.png"><?php _e('发表文章总数'); ?>:<i><?php echo num2tring($recommend['article_count']) ?></i></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <?php } ?>
+                            
+                    </div>
+                    
+                    
+                </div>
+            </div>
+        </div>
+</div>
+<script type="text/javascript">
+        var sort = 'sum';
+        var re=eval("/dl/g");
+
+        $(".N-mytitle").find("a").mouseenter(function(){
+          $('#bp_all_more').show();
+          $('#bp_all_more').attr('data-page',1);
+          $(".N-mytitle").find("li").removeClass("cur");
+          $(this).parent().addClass("cur");
+          var url=$(this).attr("href");
+          sort = $(this).attr('data-sort');
+          $.get(url,function(result){
+            $('.N-myzilistbox').html(result);
+          });
+        });
+        $('#bp_all_more').click(function ()
+            {   
+                var curPage = parseInt($(this).attr('data-page')) + 1;
+                
+                var cloneN = $(".N-myzilistbox").clone();
+
+
+                $('.N-myzilistbox').html('<p style="padding: 15px 0" align="center"><img src="' + G_STATIC_URL + '/css/default/img/loading_b.gif" alt="" /></p>');
+
+                $.get(G_BASE_URL + '/column/ajax/list/sort' + '-' + sort + '__page' + '-' + curPage, function (response)
+                {   
+
+                    if ($.trim(response) != '')
+                    {   
+                        var lengt = response.match(re).length;
+
+                        if(lengt < 12){
+                            $("#bp_all_more").attr('data-page',0);
+                        }else{
+                            $("#bp_all_more").attr('data-page',curPage); 
+                        }
+                        
+                        $('.N-myzilistbox').html(response);
+                    }
+                    else
+                    {   
+                        $("#bp_all_more").attr('data-page',0);
+                        $('.N-myzilistbox').html(cloneN);
+                        
+                    }
+                });
+         });
+
+        $('#article_all_more').click(function(){
+
+                var aPage = parseInt($(this).attr('data-page')) + 1;
+
+                var cloneA = $(".nzllist").clone();
+
+                $('.nzllist').html('<p style="padding: 15px 0" align="center"><img src="' + G_STATIC_URL + '/css/default/img/loading_b.gif" alt="" /></p>');
+
+                $.get(G_BASE_URL + '/column/ajax/article_list/page'+'-'+aPage, function (response)
+                {
+                    if ($.trim(response) != '')
+                    {   
+
+                        var lengt = response.match(re).length;
+
+                        if(lengt < 12){
+
+                            $("#article_all_more").attr('data-page',0);
+
+                        }else{
+
+                            $("#article_all_more").attr('data-page',aPage); 
+
+                        }
+                        
+                        $('.nzllist').html(response);
+                    }
+                    else
+                    {   
+                        $("#article_all_more").attr('data-page',0); 
+                        $('.nzllist').html(cloneA);
+                        
+                    }
+
+                });
+        })
+</script>
+
+<?php TPL::output('global/footer.tpl.htm'); ?>

@@ -1,0 +1,27 @@
+.bdsharebuttonbox .aw-dropdown-list li a{
+	background-repeat:no-repeat;
+	float: left;
+	font-size: 14px;
+	padding-left: 30px;
+	line-height: 24px;
+	height: 24px;
+	cursor: pointer;
+	margin: 6px 6px 6px 0;
+	width: 100%;
+	text-align: center;
+	background-position: 25% 0%;
+
+}
+.bds_sqq{
+	background-image: url("/static/api/img/custorm/QQ.png");
+
+}
+.bds_weixin{
+	background-image: url("/static/api/img/custorm/wx.png");
+}
+.bds_tsina{
+	background-image: url("/static/api/img/custorm/wb.png");
+}
+.bds_qzone{
+	background-image: url("/static/api/img/custorm/kj.png");
+}

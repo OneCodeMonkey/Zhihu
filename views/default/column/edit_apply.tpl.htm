@@ -1,0 +1,85 @@
+<?php TPL::output('global/header.tpl.htm'); ?>
+<div class="simpowenda" style=" min-height:600px;" id="simpowenda">
+
+    <h2><b>编辑专栏</b></h2>
+    <form action="column/ajax/edit_apply/" method="post" id="column_form"
+          onsubmit="return false;">
+        <input type="hidden" name="post_hash" value="<?php echo new_post_hash() ?>">
+        <input type="hidden" name="logo_img" value="<?php echo $this->column['column_pic']?$this->column['column_pic']:G_STATIC_URL.'/css/default/img/default-cover.jpg' ?>">
+        <input type="hidden" name="id" value="<?php echo $this->column['column_id'] ?>">
+        <div class="zl_form">
+            <dl>
+                <dt>专栏状态：</dt>
+                <dd><?php if ($this->column['is_verify'] == 1) { ?>
+                        <span class="blue">
+                            <img src="<?php echo G_STATIC_URL ?>/css/default/img/adopt.png"/>审核通过
+                        </span>
+                    <?php } ?>
+                    <?php if ($this->column['is_verify'] == 0) { ?>
+                        <span class="orange">
+                            <img src="<?php echo G_STATIC_URL ?>/css/default/img/audited.png"/>待审核
+                        </span>
+                    <?php } ?>
+                    <?php if ($this->column['is_verify'] == -1) { ?>
+                        <span class="red">
+                        <img src="<?php echo G_STATIC_URL ?>/css/default/img/refuse.png"/>拒绝
+                        </span>
+                    <?php } ?>
+                </dd>
+            </dl>
+            <?php if ($this->column['is_verify'] == -1) { ?>
+                <dl>
+                    <dt>拒绝原因：<?php echo $this->column['reson']; ?></dt>
+                </dl>
+            <?php } ?>
+            <?php if (get_setting('upload_enable') == 'Y' AND get_setting('advanced_editor_enable' == 'Y')) { ?>
+            <dl>
+                <dt><em style=" color:#f00">*</em>专栏封面：</dt>
+                <dd>
+                    <div class="side-bar">
+                        <dl>
+                            <dt class="pull-left">
+                                <img class="aw-border-radius-5" src="<?php echo $this->column['column_pic']?$this->column['column_pic']:G_STATIC_URL.'/css/default/img/default-cover.jpg'?>"
+                                     id="logo_img" style="height: 100px;width: 100px;"></dt>
+                            <dd class="pull-left">
+                                <h5>封面设置</h5>
+                                <p>支持 jpg、gif、png 等格式的图片 建议图片尺寸为100*100</p>
+                                <a class="btn btn-mini btn-success" id="logo_uploader" href="javascript:;">上传封面</a>
+                                <span id="logo_uploading_status" class="collapse"><i
+                                            class="aw-loading"></i> <?php _e('文件上传中...'); ?></span>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="clearfix"></div>
+                </dd>
+            </dl>
+            <?php }?>
+            <dl>
+                <dt><em style=" color:#f00">*</em>专栏名称：</dt>
+                <dd><input name="name" value="<?php echo $this->column['column_name'] ?>" type="text"
+                           style="width:600px" placeholder="输入专栏名称"></dd>
+            </dl>
+            <dl>
+                <dt><em style=" color:#f00">*</em>专栏简介(60字内)：</dt>
+                <dd><textarea cols="" rows="" name="description"
+                              placeholder="输入专栏简介"><?php echo $this->column['column_description'] ?></textarea></dd>
+            </dl>
+            <dl>
+                <dd>
+                    <div class="mod-footer clearfix">
+                        <a class="btn btn-large btn-success btn-publish-submit" id="publish_submit"
+                           onclick="AWS.ajax_post($('#column_form')); return false;">提交申请</a>
+                    </div>
+                </dd>
+            </dl>
+        </div>
+    </form>
+</div>
+<script>
+    $(function () {
+        var fileUpload = new FileUpload('avatar', $('#logo_uploader'), $('#logo_img'), G_BASE_URL + '/column/ajax/logo_upload/', {loading_status: '#logo_uploading_status',accept:'image/*'}, function () {
+            $('input[name="logo_img"]').val($('#logo_img').attr('src'));
+        });
+    })
+</script>
+<?php TPL::output('global/footer.tpl.htm'); ?>

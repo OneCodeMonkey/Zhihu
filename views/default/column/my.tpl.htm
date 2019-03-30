@@ -1,0 +1,183 @@
+<?php TPL::output('global/header.tpl.htm'); ?>
+    <div class="aw-container-wrap">
+        <div class="container">
+            <div class="row">
+                <div class="aw-content-wrap clearfix simpobox">
+
+                    <div class="N-left clearfix">
+                        <div class="N-title">
+                            <h2><img src="<?php echo G_STATIC_URL ?>/css/default/img/np.png">我的专栏</h2>
+                            <a href="column/apply/">申请专栏</a>
+                        </div>
+                        <?php foreach ($this->columns as $column) { ?>
+                            <div class="N-zllist clearfix">
+                                <div class="N-zilistbox <?php if ($column['is_verify'] == '0') { ?>wait-hs<?php } ?>">
+                                    <dl>
+                                        <dt>
+                                            <img onclick="window.location.href='column/details/<?php echo $column["column_id"] ?>'"
+                                                 class="N-zimg" src="<?php echo $column['column_pic'] ?>">
+                                        </dt>
+                                        <dd>
+                                            <h2>
+                                                <a href="column/details/<?php echo $column['column_id'] ?>"><?php echo cjk_substr($column['column_name'], 0, 15, 'utf-8', '...') ?></a>
+                                            </h2>
+                                            <p><?php echo cjk_substr($column['column_description'], 0, 40, 'utf-8', '...') ?></p>
+                                            <span>
+                                        	<em><i><img src="<?php echo G_STATIC_URL ?>/css/default/img/nz.png"></i><?php echo $column['vote_count'] ?></em>
+                                        </span>
+                                        </dd>
+                                    </dl>
+                                    <ul>
+                                        <li>浏览量<b><?php echo $column['view_count'] ?></b></li>
+                                        <li>文章数<b><?php echo $column['article_count'] ?></b></li>
+                                    </ul>
+                                    <ol>
+                                        <?php if ($column['is_verify'] != '0') { ?>
+                                            <li><a href="column/edit_apply/<?php echo $column['column_id'] ?>"><img
+                                                            src="<?php echo G_STATIC_URL ?>/css/default/img/nedit.png">编辑</a>
+                                            </li>
+                                            <?php if ($column['is_verify'] == '1') { ?>
+                                                <li>
+                                                    <a href="<?php echo get_js_url('/publish/article/?column_id=' . $column['column_id']) ?>"><img
+                                                                src="<?php echo G_STATIC_URL ?>/css/default/img/naddw.png">发文章</a>
+                                                </li>
+                                            <?php } ?>
+                                            <li>
+                                                <a href="javascript:void(0);"
+                                                   onclick="deleteColumn(<?php echo $column['column_id'] ?>,'<?php echo $this->post_hash; ?>')"><img
+                                                            src="<?php echo G_STATIC_URL ?>/css/default/img/ndel.png">删除</a>
+                                            </li>
+                                        <?php } else { ?>
+                                            <li></li>
+                                        <?php } ?>
+                                    </ol>
+                                </div>
+                            </div>
+                        <?php } ?>
+                        <h6 class="nhref"><span onclick="loadPage()"><i><img
+                                            src="<?php echo G_STATIC_URL ?>/css/default/img/href.png"></i>更多</span></h6>
+                        <h6 class="nhref" style="display: none"><span><i><img
+                                            src="<?php echo G_STATIC_URL ?>/css/default/img/ajax-loader.gif"></i>加载中</span>
+                        </h6>
+                    </div>
+                    <div class="N-right clearfix">
+                        <div class="N-zlword">
+                            <h2>专栏文章</h2>
+                            <ul>
+                                <li onclick="window.location.href='home/#draft_list__draft'"><em><img
+                                                src="<?php echo G_STATIC_URL ?>/css/default/img/N_c1.png"></em>
+                                    <a href="javascript:void (0);">我的草稿</a></li>
+
+                                <li onclick="window.location.href='home/#focus_column__focus'"><em><img
+                                                src="<?php echo G_STATIC_URL ?>/css/default/img/N_c3.png"></em>
+                                    <a href="javascript:void (0);">我关注的专栏</a>
+                                </li>
+                                <li onclick="window.location.href='favorite/'"><em><img
+                                                src="<?php echo G_STATIC_URL ?>/css/default/img/N_c4.png"></em>
+                                    <a href="javascript:void (0);">我收藏的文章</a>
+                                </li>
+
+                            </ul>
+                        </div>
+                        <div class="N-zlword">
+                            <h2>可能感兴趣的人或话题</h2>
+                            <?php foreach ($this->sidebar_recommend_users_topics AS $key => $val) { ?>
+                                <?php if ($val['topic_id']) { ?>
+                                    <dl>
+                                        <dt class="pull-left aw-border-radius-5">
+                                            <a href="topic/<?php echo $val['url_token']; ?>"><img
+                                                        alt="<?php echo $val['topic_title']; ?>"
+                                                        src="<?php echo get_topic_pic_url('mid', $val['topic_pic']); ?>"/></a>
+                                        </dt>
+                                        <dd class="pull-left">
+				<span class="topic-tag">
+					<a href="topic/<?php echo $val['url_token']; ?>"
+                       class="text"><?php echo cjk_substr($val['topic_title'], 0, 8, 'UTF-8', '...'); ?></a>
+				</span>&nbsp;
+                                            <a class="icon-inverse follow tooltips icon icon-plus"
+                                               data-placement="bottom"
+                                               title=""
+                                               data-toggle="tooltip" data-original-title="<?php _e('关注'); ?>"
+                                               onclick="AWS.User.follow($(this), 'topic', <?php echo $val['topic_id']; ?>);AWS.ajax_request(G_BASE_URL + '/account/ajax/clean_user_recommend_cache/');"></a>
+                                            <p><?php if ($val['focus_users']['user_name']) { ?><a
+                                                    href="people/<?php echo $val['focus_users']['url_token']; ?>"
+                                                    class="aw-user-name"
+                                                    data-id="<?php echo $val['focus_users']['uid']; ?>"><?php echo $val['focus_users']['user_name']; ?></a> <?php _e('关注了该话题'); ?><?php } ?>
+                                            </p>
+                                        </dd>
+                                    </dl>
+                                <?php } else { ?>
+                                    <dl>
+                                        <dt class="pull-left aw-border-radius-5">
+                                            <a href="people/<?php echo $val['url_token']; ?>"
+                                               data-id="<?php echo $val['uid']; ?>"
+                                               class="aw-user-name"><img alt="<?php echo $val['user_name']; ?>"
+                                                                         src="<?php echo get_avatar_url($val['uid'], 'min'); ?>"/></a>
+                                        </dt>
+                                        <dd class="pull-left">
+                                            <a href="people/<?php echo $val['url_token']; ?>"
+                                               data-id="<?php echo $val['uid']; ?>"
+                                               class="aw-user-name"><span><?php echo $val['user_name']; ?></span><?php if ($val['verified']) { ?>
+                                                <i class="icon-v<?php if ($val['verified'] == 'enterprise') { ?> i-ve<?php } ?>"
+                                                   title="<?php if ($val['verified'] == 'enterprise') { ?>企业认证<?php } else { ?>个人认证<?php } ?>"></i><?php } ?>
+                                            </a>
+                                            <a class="icon-inverse follow tooltips icon icon-plus"
+                                               data-placement="bottom"
+                                               title=""
+                                               data-toggle="tooltip" data-original-title="<?php _e('关注'); ?>"
+                                               onclick="AWS.User.follow($(this), 'user', <?php echo $val['uid']; ?>);AWS.ajax_request(G_BASE_URL + '/account/ajax/clean_user_recommend_cache/');"></a>
+                                            <p class="signature"><?php echo $val['signature']; ?></p>
+                                            <p><?php if ($val['type'] == 'friend') { ?><a
+                                                    href="people/<?php echo $val['friend_users']['url_token']; ?>"
+                                                    class="aw-user-name"
+                                                    data-id="<?php echo $val['friend_users']['uid']; ?>"><?php echo $val['friend_users']['user_name']; ?></a> <?php _e('关注了 TA'); ?><?php } else if ($val['type'] == 'topic') { ?><?php _e('TA 也关注'); ?>
+                                                    <a
+                                                    href='topic/<?php echo $val['topic_info']['url_token']; ?>'><?php echo $val['topic_info']['topic_title']; ?></a><?php } ?>
+                                            </p>
+                                        </dd>
+                                    </dl>
+                                <?php } ?>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var page = 1;
+        var $load = $('.nhref:first');
+        var $loading = $('.nhref:last');
+
+        function loadPage() {
+            $.ajax({
+                url: G_BASE_URL + '/column/ajax/load_my_column_page/',
+                type: 'GET',
+                data: {
+                    page: ++page
+                },
+                beforeSend() {
+                    $load.hide();
+                    $loading.show();
+                },
+                success(result) {
+                    if (result) {
+                        $('.N-zllist:last').after(result);
+                        $load.show();
+                    } else {
+                        $load.show().html('<span>没有更多了</span>');
+                    }
+                },
+                complete(){
+                    $loading.hide();
+                }
+            })
+        }
+
+        function deleteColumn(id, post_hash) {
+            AWS.dialog('confirm', {'message': '确定要删除专栏吗?删除专栏后，专栏中的所有文章也会被删除'}, function () {
+                AWS.ajax_request(G_BASE_URL + '/column/ajax/delete_column/', 'column_id=' + id + '&post_hash=' + post_hash)
+            })
+        }
+    </script>
+<?php TPL::output('global/footer.tpl.htm'); ?>

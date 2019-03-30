@@ -1,0 +1,43 @@
+<?php foreach ($this->columns as $column) { ?>
+    <div class="N-zilistbox <?php if ($column['is_verify'] == '0') { ?>wait-hs<?php } ?>">
+        <dl>
+            <dt>
+                <img onclick="window.location.href='column/details/<?php echo $column["column_id"] ?>'"
+                     class="N-zimg" src="<?php echo $column['column_pic'] ?>">
+            </dt>
+            <dd>
+                <h2>
+                    <a href="column/details/<?php echo $column['column_id'] ?>"><?php echo cjk_substr($column['column_name'], 0, 15, 'utf-8', '...') ?></a>
+                </h2>
+                <p><?php echo cjk_substr($column['column_description'], 0, 50, 'utf-8', '...') ?></p>
+                <span>
+                                        	<em><i><img src="<?php echo G_STATIC_URL ?>/css/default/img/nz.png"></i><?php echo $column['vote_count'] ?></em>
+                                        </span>
+            </dd>
+        </dl>
+        <ul>
+            <li>浏览量<b><?php echo $column['view_count'] ?></b></li>
+            <li>文章数<b><?php echo $column['article_count'] ?></b></li>
+        </ul>
+        <ol>
+            <?php if ($column['is_verify'] != '0') { ?>
+                <li><a href="column/edit_apply/<?php echo $column['column_id'] ?>"><img
+                                src="<?php echo G_STATIC_URL ?>/css/default/img/nedit.png">编辑</a>
+                </li>
+                <?php if ($column['is_verify'] == '1') { ?>
+                    <li>
+                        <a href="<?php echo get_js_url('/publish/article/?column_id=' . $column['column_id']) ?>"><img
+                                    src="<?php echo G_STATIC_URL ?>/css/default/img/naddw.png">发文章</a>
+                    </li>
+                <?php } ?>
+                <li>
+                    <a href="javascript:void(0);"
+                       onclick="deleteColumn(<?php echo $column['column_id'] ?>,'<?php echo $this->post_hash; ?>')"><img
+                                src="<?php echo G_STATIC_URL ?>/css/default/img/ndel.png">删除</a>
+                </li>
+            <?php } else { ?>
+                <li></li>
+            <?php } ?>
+        </ol>
+    </div>
+<?php } ?>

@@ -1,0 +1,145 @@
+<?php TPL::output('global/header.tpl.htm'); ?>
+<div class="aw-container-wrap">
+        <div class="container">
+            <div class="row">
+                <div class="aw-content-wrap clearfix simpobox">
+                
+                
+                
+                    <div class="N-left clearfix">
+                        <?php if($this->article_list){ ?>
+                        <div class="N-myzllist">
+                                <?php foreach($this->article_list as $article){ ?>
+                                <dl>
+                                    <dt><a href="article/<?php echo $article['id']; ?>#!answer_form"><img src="<?php echo $article['article_img']; ?>"></a></dt>
+                                    <dd>
+                                        <h2><a href="article/<?php echo $article['id']; ?>"><?php echo cjk_substr($article['title'], 0, 20 , 'UTF-8', '...') ?></a></h2>
+                                        <p><?php echo cjk_substr($article['message'], 0, 100 , 'UTF-8', '...') ?></p>
+                                        <span>
+                                            <em><img src="<?php echo G_STATIC_URL ?>/css/default/img/ntime.png"><?php echo date_friendly($article['add_time']);?></em>
+                                            <em><img src="<?php echo G_STATIC_URL ?>/css/default/img/nsee.png"><?php echo num2tring($article['views']) ?></em>
+                                            <em><a href="article/<?php echo $article['id']; ?>#!answer_form"><img src="<?php echo G_STATIC_URL ?>/css/default/img/simpoly.png"><?php _e('评论'); ?></a></em>
+                                        </span>
+                                    </dd>
+                                </dl>
+                                <?php } ?>
+                                <div class="mod-footer fl_none">
+                                    <?php echo $this->pagination; ?>
+                                </div>
+                            
+                        </div>
+                         <?php }else{ ?>
+                            <div class="No-myzllist"><p style="" align="center"><?php _e('没有内容'); ?></p></div>
+                        <?php } ?>
+
+
+                    </div>
+
+                    
+                    <div class="N-right clearfix">
+                      
+                      <div class="author">
+                        <div class="author-phone"><p><img onclick="" src="<?php echo $this->column_info['column_pic']; ?>"></p><?php if($this->column_info['user_info']['verified']){ ?><span class="author-icon"></span><?php } ?></div>
+                        
+                        <p class="author-name"><?php echo $this->column_info['column_name']; ?></p>
+                        <p class="author-profile"><?php echo $this->column_info['column_description']; ?></p>
+                        
+                        <span class="author-fav">
+                            <?php if ($this->column_info['uid'] != $this->user_id AND $this->user_id) { ?>
+                                <a href="javascript:;" onclick="AWS.User.follow($(this), 'column', <?php echo $this->column_info['column_id']; ?> , true);" class="<?php if ($this->has_focus_column) { ?>active<?php } ?>"><span><?php if ($this->has_focus_column) { ?><?php _e('取消关注'); ?><?php } else { ?><?php _e('关注'); ?><?php } ?></span> 
+                               <!--  <b><?php echo $this->column_info['focus_count']; ?></b> -->
+                                </a>
+
+                                <a href="javascript:;" onclick="AWS.dialog('inbox','<?php echo $this->column_info['user_info']['user_name']; ?>');" class="author-sx">私信</a>
+                            <?php } ?>
+                        </span>
+                        
+                        <div class="author-record">
+                            <p class="newCount"><img src="<?php echo G_STATIC_URL ?>/css/default/img/nsee.png"><?php _e('文章总浏览量'); ?><span class="rt"><?php echo num2tring($this->column_info['article_sum_count']); ?></span></p>
+                            <p class="newCount"><img src="<?php echo G_STATIC_URL ?>/css/default/img/nsan.png"><?php _e('发表文章总数'); ?><span class="rt"><?php echo num2tring($this->column_info['article_num']); ?></span></p>
+                            <p class="newCount"><img src="<?php echo G_STATIC_URL ?>/css/default/img/nsvn.png"><?php _e('被关注数'); ?><span class="rt"><?php echo num2tring($this->column_info['focus_count']); ?></span></p>
+                        </div>
+                        
+                        
+                      </div>
+                      
+                      
+                      <div class="m-hot">
+                        <div class="m-hot-tt"><i></i>TA的热门文章</div>
+                        <dl>
+                            <?php foreach($this->hot_article_list as $k => $article){ ?>
+
+                            <?php if($k == 0){ ?>
+                            <dt>
+                                <i><img src="<?php echo G_STATIC_URL ?>/css/default/img/nicon.png"></i>
+                                <a href="article/<?php echo $article['id']; ?>#!answer_form"><img class="m-imgtop" src="<?php echo $article['article_img']; ?>">
+                                <h2><?php echo cjk_substr($article['title'], 0, 20 , 'UTF-8', '...') ?></h2></a>
+                            </dt>
+                            <?php }else{ ?>
+                            <dd class="clearfix">
+                                <a href="article/<?php echo $article['id']; ?>#!answer_form"><img src="<?php echo $article['article_img']; ?>"><i><?php echo $k + 1; ?></i></a>
+                                <a href="article/<?php echo $article['id']; ?>#!answer_form" class="mhottitle"><?php echo cjk_substr($article['title'], 0, 15 , 'UTF-8', '...') ?></a>
+                            </dd>
+                            <?php } ?>
+                            <?php } ?>
+                        </dl>
+                      </div>
+                      
+                      
+                      
+                      <!-- <div class="m-hot">
+                        <div class="m-hot-tt"><i></i>相关文章</div>
+                        <dl>
+                            <dd class="clearfix">
+                                <a href="#"><img src="img/zlimg.png"></a>
+                                <a href="#" class="mhottitle">韩国检察官突袭首尔三个加密货币...</a>
+                            </dd>
+                            <dd class="clearfix">
+                                <a href="#"><img src="img/zlimg.png"></a>
+                                <a href="#" class="mhottitle">韩国检察官突袭首尔三个加密货币...</a>
+                            </dd>
+                            <dd class="clearfix">
+                                <a href="#"><img src="img/zlimg.png"></a>
+                                <a href="#" class="mhottitle">韩国检察官突袭首尔三个加密货币...</a>
+                            </dd>
+                            <dd class="clearfix">
+                                <a href="#"><img src="img/zlimg.png"></a>
+                                <a href="#" class="mhottitle">韩国检察官突袭首尔三个加密货币...</a>
+                            </dd>
+                            <dd class="clearfix">
+                                <a href="#"><img src="img/zlimg.png"></a>
+                                <a href="#" class="mhottitle">韩国检察官突袭首尔三个加密货币...</a>
+                            </dd>
+                            <dd class="clearfix">
+                                <a href="#"><img src="img/zlimg.png"></a>
+                                <a href="#" class="mhottitle">韩国检察官突袭首尔三个加密货币...</a>
+                            </dd>
+  
+                        </dl>
+                      </div> -->
+                      
+                      
+                    </div>
+                    
+                    
+                </div>
+            </div>
+        </div>
+</div>
+
+<script type="text/javascript">
+    var PEOPLE_USER_ID = '<?php echo $this->user['uid']; ?>';
+
+    var ACTIVITY_ACTIONS = '<?php echo implode(',', array(
+        ACTION_LOG::ADD_QUESTION,
+        ACTION_LOG::ANSWER_QUESTION,
+        ACTION_LOG::ADD_REQUESTION_FOCUS,
+        ACTION_LOG::ADD_AGREE,
+        ACTION_LOG::ADD_TOPIC,
+        ACTION_LOG::ADD_TOPIC_FOCUS,
+        ACTION_LOG::ADD_ARTICLE,
+        ACTION_LOG::ADD_AGREE_ARTICLE,
+        ACTION_LOG::ADD_COMMENT_ARTICLE
+    )); ?>';
+</script>
+<?php TPL::output('global/footer.tpl.htm'); ?>
