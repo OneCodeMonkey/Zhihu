@@ -26,8 +26,14 @@ WeCenter 问答系统是一套开源的社交化问答软件系统。作为国�
  2. 设置目录属性（windows 服务器可忽略这一步）
 以下这些目录需要可读写权限
 > ./
-./system
-./system/config 含子目录
+> ./system
+> ./system/config 含子目录
+>
+> ./cache
+>
+> ./tmp
+>
+> ./uploads
 
  3. 访问站点开始安装
  4. 参照页面提示，进行安装，直至安装完毕
